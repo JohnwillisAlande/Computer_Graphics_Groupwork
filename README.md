@@ -21,3 +21,21 @@ A simple yet fun bouncing ball game built with Python and Pygame. Control a padd
 3. Use the **left** and **right arrow keys** to control the paddle and keep the ball from falling.
 4. Every time the ball hits the paddle or the screen boundaries, the background changes color.
 5. The game ends if the ball falls below the screen. Your score is then displayed in the console.
+## Installation and Setup
+1. Ensure you have Python and Pygame installed.
+   ```bash
+   pip install pygame
+   ```
+2. Download or clone the repository:
+   ```bash
+   git clone https://github.com/JohnwillisAlande/Computer_Graphics_Groupwork.git
+   ```
+3. Navigate to the project directory and run the game:
+   ```bash
+   cd Mini_Project
+   python Ball_Game.py
+   ```
+
+## Requirements
+- Python 3.x
+- Pygame library
