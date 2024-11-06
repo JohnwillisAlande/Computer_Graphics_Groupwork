@@ -1,138 +1,156 @@
-import pygame  # Import Pygame library for game development
-import sys     # Import sys for system functions, such as exiting the game
-import random  # Import random for generating random values
+import pygame
+import sys
+import random
 
-# Initialize Pygame library
 pygame.init()
 
-# Constants for game window dimensions and colors
-WIDTH, HEIGHT = 600, 400          # Screen width and height
-RADIUS = 20                        # Ball radius
-PADDLE_WIDTH, PADDLE_HEIGHT = 100, 10  # Paddle dimensions
-WHITE = (255, 255, 255)            # RGB color for white
-BLACK = (0, 0, 0)                  # RGB color for black
+# Constants
+WIDTH, HEIGHT = 600, 400
+RADIUS = 20
+PADDLE_WIDTH, PADDLE_HEIGHT = 100, 10
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
-# Create the game display window
+# Game Display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Bouncing Ball Game')  # Set window title
+pygame.display.set_caption("Bouncing Ball Game")
 
-# Initial position for paddle and its speed
-paddle_x = (WIDTH - PADDLE_WIDTH) // 2  # Center paddle horizontally
-paddle_y = HEIGHT - PADDLE_HEIGHT - 10  # Position paddle near bottom of screen
-paddle_speed = 8                        # Paddle movement speed
+# Paddle and Ball
+paddle_x = (WIDTH - PADDLE_WIDTH) // 2
+paddle_y = HEIGHT - PADDLE_HEIGHT - 10
+paddle_speed = 8
+x, y = paddle_x + PADDLE_WIDTH // 2, paddle_y - RADIUS
+dx, dy = 0, 0
 
-# Initial position and velocity for the ball
-x, y = paddle_x + PADDLE_WIDTH // 2, paddle_y - RADIUS  # Start above paddle center
-dx, dy = 0, 0  # Ball starts stationary
+# Power-Ups
+power_up_active = False
+power_up_timer = 0
+power_up_types = ['widen', 'extra_life', 'score_multiplier']
+power_up = None
+power_up_rect = None
 
-# Score and game state flags
-score = 0            # Player's score
-ball_launched = False  # Tracks if the ball has been launched
-game_over = False      # Tracks if the game is over
+# Game State
+score = 0
+ball_launched = False
+game_over = False
+lives = 3
 
-# Set font for displaying text on the screen
+# Font and Backgrounds
 font = pygame.font.Font(None, 36)
+backgrounds = {
+    "countryside": pygame.image.load("countryside.png").convert(),
+    "city": pygame.image.load("city.png").convert(),
+    "underwater": pygame.image.load("underwater.png").convert()
+}
+background_theme = "countryside"
 
-# Random initial background and target colors
-background_color = random.choices(range(256), k=3)  # RGB for gradient background
-target_color = random.choices(range(256), k=3)      # Target color for smooth transition
+# Power-Up Effects
+def activate_power_up(power_up_type):
+    global paddle_x, PADDLE_WIDTH, score
+    if power_up_type == "widen":
+        PADDLE_WIDTH = 150
+    elif power_up_type == "extra_life":
+        lives += 1
+    elif power_up_type == "score_multiplier":
+        score += 5
 
+# Generate Random Power-Up
+def generate_power_up():
+    global power_up, power_up_rect
+    power_up = random.choice(power_up_types)
+    power_up_rect = pygame.Rect(random.randint(0, WIDTH - 30), random.randint(0, HEIGHT - 200), 30, 30)
 
-# Smoothly transition colors for background
-def smooth_color_transition(current, target, speed=1):
-    return tuple(min(255, max(0, current[i] + (speed if current[i] < target[i] else -speed))) for i in range(3))
+# Draw Power-Up
+def draw_power_up():
+    if power_up == "widen":
+        color = (0, 255, 0)
+    elif power_up == "extra_life":
+        color = (255, 0, 0)
+    elif power_up == "score_multiplier":
+        color = (0, 0, 255)
+    pygame.draw.ellipse(screen, color, power_up_rect)
 
-# Draw gradient background between two colors
-def draw_gradient_background(color1, color2):
-    for i in range(HEIGHT):
-        ratio = i / HEIGHT  # Gradual color blending ratio
-        color = (
-            int(color1[0] * (1 - ratio) + color2[0] * ratio),
-            int(color1[1] * (1 - ratio) + color2[1] * ratio),
-            int(color1[2] * (1 - ratio) + color2[2] * ratio),
-        )
-        pygame.draw.line(screen, color, (0, i), (WIDTH, i))  # Draw a horizontal line for each row
+# Animated Text Boxes
+def draw_animated_text_box(text, pos):
+    box_color = (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect(center=pos)
+    box_rect = text_rect.inflate(20, 20)
+    pygame.draw.rect(screen, box_color, box_rect, border_radius=8)
+    screen.blit(text_surface, text_rect)
 
-
-# Main game loop
+# Game Loop
 clock = pygame.time.Clock()
 while True:
-    # Handle events, such as quitting the game or pressing keys
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()  # Close the game window
-            sys.exit()     # Exit the program
+            pygame.quit()
+            sys.exit()
         elif event.type == pygame.KEYDOWN and not ball_launched and not game_over:
-            dx, dy = random.choice([-5, 5]), -5  # Launch ball in random horizontal direction
-            ball_launched = True  # Mark ball as launched
+            dx, dy = random.choice([-5, 5]), -5
+            ball_launched = True
 
-    # Paddle movement controls
-    keys = pygame.key.get_pressed()  # Check pressed keys
-    if keys[pygame.K_LEFT]:          # Move paddle left if within screen bounds
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
         paddle_x = max(0, paddle_x - paddle_speed)
-    if keys[pygame.K_RIGHT]:         # Move paddle right if within screen bounds
+    if keys[pygame.K_RIGHT]:
         paddle_x = min(WIDTH - PADDLE_WIDTH, paddle_x + paddle_speed)
 
-    # Only update game state if the game is not over
     if not game_over:
         if ball_launched:
-            x += dx  # Update ball's x-coordinate
-            y += dy  # Update ball's y-coordinate
+            x += dx
+            y += dy
 
-        # Ball collision with left and right walls
         if x - RADIUS <= 0 or x + RADIUS >= WIDTH:
-            dx = -dx  # Reverse ball's horizontal direction
-            target_color = random.choices(range(256), k=3)  # Change background target color
+            dx = -dx
 
-        # Ball collision with the top wall
         if y - RADIUS <= 0:
-            dy = -dy  # Reverse ball's vertical direction
-            target_color = random.choices(range(256), k=3)  # Change background target color
+            dy = -dy
 
-        # Ball collision with the paddle
         if dy > 0 and y + RADIUS >= paddle_y and paddle_x <= x <= paddle_x + PADDLE_WIDTH:
-            dy = -dy  # Reverse ball's vertical direction
-            score += 1  # Increase score
-            target_color = random.choices(range(256), k=3)  # Change background target color
+            dy = -dy
+            score += 1
+            generate_power_up()
 
-        # Game over if ball falls below the paddle
         if y + RADIUS >= HEIGHT:
-            game_over = True  # Set game state to over
-            dy = 0  # Stop ball movement
+            lives -= 1
+            if lives == 0:
+                game_over = True
+            else:
+                ball_launched = False
+                x, y = paddle_x + PADDLE_WIDTH // 2, paddle_y - RADIUS
 
-    # Update gradient background color
-    background_color = smooth_color_transition(background_color, target_color, speed=2)
-    if background_color == target_color:
-        target_color = random.choices(range(256), k=3)  # Update target color if transition complete
-    draw_gradient_background(background_color, BLACK)
+        # Check for power-up collection
+        if power_up_rect and paddle_y <= power_up_rect.y <= paddle_y + PADDLE_HEIGHT and \
+           paddle_x <= power_up_rect.x <= paddle_x + PADDLE_WIDTH:
+            activate_power_up(power_up)
+            power_up = None
+            power_up_rect = None
 
-    # Draw paddle and ball
-    pygame.draw.rect(screen, WHITE, (paddle_x, paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT))  # Paddle
-    if not ball_launched:
-        x = paddle_x + PADDLE_WIDTH // 2  # Position ball above center of paddle
-        y = paddle_y - RADIUS
-    pygame.draw.circle(screen, WHITE, (x, y), RADIUS)  # Ball
+        # Background Cycle
+        background_theme = "countryside" if score < 5 else "city" if score < 10 else "underwater"
+        screen.blit(backgrounds[background_theme], (0, 0))
 
-    # Display score or game over message
+        # Draw paddle, ball, and power-ups
+        pygame.draw.rect(screen, WHITE, (paddle_x, paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT))
+        pygame.draw.circle(screen, WHITE, (x, y), RADIUS)
+        if power_up:
+            draw_power_up()
+
+    # Animated Text Boxes
+    draw_animated_text_box(f"Score: {score}", (WIDTH // 2, 30))
+    draw_animated_text_box(f"Lives: {lives}", (WIDTH - 70, 30))
     if game_over:
-        game_over_text = font.render("Game Over! Press R to Restart", True, WHITE)
-        screen.blit(game_over_text, (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2))
-        final_score_text = font.render(f'Final Score: {score}', True, WHITE)
-        screen.blit(final_score_text, (WIDTH // 2 - final_score_text.get_width() // 2, HEIGHT // 2 + 40))
+        draw_animated_text_box("Game Over! Press R to Restart", (WIDTH // 2, HEIGHT // 2))
 
-        # Restart game if 'R' key is pressed
-        if keys[pygame.K_r]:
-            x, y = paddle_x + PADDLE_WIDTH // 2, paddle_y - RADIUS  # Reset ball position
-            dx, dy = 0, 0  # Reset ball velocity
-            score = 0  # Reset score
-            ball_launched = False  # Ball not launched yet
-            game_over = False  # Game is active again
-            background_color = random.choices(range(256), k=3)  # Reset background color
-            target_color = random.choices(range(256), k=3)      # Reset target color
-    else:
-        score_text = font.render(f'Score: {score}', True, WHITE)
-        screen.blit(score_text, (10, 10))  # Display score at top-left
+    if keys[pygame.K_r] and game_over:
+        x, y = paddle_x + PADDLE_WIDTH // 2, paddle_y - RADIUS
+        dx, dy = 0, 0
+        score = 0
+        ball_launched = False
+        game_over = False
+        lives = 3
+        PADDLE_WIDTH = 100
 
-    # Refresh display and cap the frame rate
-    pygame.display.flip()  # Update the screen
-    clock.tick(60)         # Maintain 60 frames per second
+    pygame.display.flip()
+    clock.tick(60)
