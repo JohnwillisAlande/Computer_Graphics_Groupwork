@@ -39,3 +39,21 @@ A simple yet fun bouncing ball game built with Python and Pygame. Control a padd
 ## Requirements
 - Python 3.x
 - Pygame library
+## Installation and Setup
+1. Ensure you have Python and Pygame installed.
+   ```bash
+   pip install pygame
+   ```
+2. Download or clone the repository:
+   ```bash
+   git clone https://github.com/JohnwillisAlande/Computer_Graphics_Groupwork.git
+   ```
+3. Navigate to the project directory and run the game:
+   ```bash
+   cd Mini_Project
+   python Ball_Game.py
+   ```
+
+## Requirements
+- Python 3.x
+- Pygame library
