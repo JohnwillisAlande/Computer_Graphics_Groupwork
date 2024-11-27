@@ -8,7 +8,7 @@ pygame.init()
 pygame.mixer.init()  # Initialize Pygame mixer for music and sounds
 
 # Constants for game window dimensions and colors
-WIDTH, HEIGHT = 600, 500          # Screen width and height
+WIDTH, HEIGHT = 700, 600          # Screen width and height
 RADIUS = 20                        # Ball radius
 PADDLE_WIDTH, PADDLE_HEIGHT = 100, 10  # Paddle dimensions
 WHITE = (255, 255, 255)            # RGB color for white
@@ -336,9 +336,10 @@ def draw_shaded_ball(ball_x, ball_y, ball_radius, ball_color):
 
 def spawn_powerup():
     """Spawns a random power-up at a random location."""
-    powerup_x = random.randint(POWERUP_RADIUS, WIDTH - POWERUP_RADIUS)
-    max_spawn_height = HEIGHT // 2  # Set the maximum height threshold for power-up spawn
-    powerup_y = random.randint(POWERUP_RADIUS, max_spawn_height - POWERUP_RADIUS)  # Spawn within threshold
+    powerup_x = random.randint(POWERUP_RADIUS, WIDTH - POWERUP_RADIUS)  # Horizontal position
+    max_spawn_height = paddle_y - 120  # Set the maximum spawn height well below the paddle
+    min_spawn_height = 150  # Ensure the power-ups do not spawn near the score display
+    powerup_y = random.randint(min_spawn_height, max_spawn_height)  # Constrain vertical position
     powerup_type = random.choice(['red', 'green'])  # Only red and green power-ups
     powerups.append({'x': powerup_x, 'y': powerup_y, 'type': powerup_type})
 
@@ -515,8 +516,8 @@ while True:
             y += dy  # Update ball's y-coordinate
 
             # Restrict ball from moving into the score area
-            if y - RADIUS < 70:  # 60 is the height threshold for the score display
-                y = 70 + RADIUS  # Reset position to just below the threshold
+            if y - RADIUS < 80:  #  height threshold for the score display
+                y = 80 + RADIUS  # Reset position to just below the threshold
                 dy = -dy  # Reverse the vertical direction to bounce back
 
         # Ball collision with left and right walls
