@@ -95,6 +95,8 @@ bronze_medal = pygame.transform.scale(bronze_medal, (50, 50))
 
 medal_images = [gold_medal, silver_medal, bronze_medal]
 
+
+
 custom_font = pygame.font.Font("assets/fonts/Elfboyclassic-PKZgZ.ttf", 36)  # Replace with your font file
 text_font = pygame.font.Font("assets/fonts/poppins.ttf", 20)  # Replace with your font file
 
@@ -103,8 +105,10 @@ menu_options = ['New Game', 'High Scores', 'Skill Mode', 'Exit']
 skill_levels = {
     'Beginner': {'paddle_width': 120, 'ball_speed': 4},
     'Intermediate': {'paddle_width': 100, 'ball_speed': 6},
-    'Expert': {'paddle_width': 80, 'ball_speed': 8},
+    'Expert': {'paddle_width': 80, 'ball_speed': 9},
 }
+
+lives = 3  # Player starts with 3 lives
 # Default skill level
 current_skill = 'Beginner'
 
@@ -114,6 +118,8 @@ MENU_GRAY = (200, 200, 200)
 current_skill_level = "Beginner"
 PADDLE_WIDTH = skill_levels[current_skill_level]["paddle_width"]
 BALL_SPEED = skill_levels[current_skill_level]["ball_speed"]
+
+paused = False
 
 def display_start_menu():
     # Variables for menu state
@@ -289,6 +295,12 @@ def display_leaderboard_screen():
 def smooth_color_transition(current, target, speed=1):
     return tuple(min(255, max(0, current[i] + (speed if current[i] < target[i] else -speed))) for i in range(3))
 
+# Add this function to display lives as text or icons
+def display_lives():
+    lives_text = custom_font.render(f"Lives: {lives}", True, WHITE)
+    screen.blit(lives_text, (WIDTH - lives_text.get_width() - 20, 10))  # Display on the top-right
+
+
 # Draw gradient background between two colors
 def draw_gradient_background(color1, color2):
     for i in range(HEIGHT):
@@ -364,6 +376,24 @@ def check_powerup_collision():
                 RADIUS = max(RADIUS - 5, 10)  # Decrease ball size
             powerups.remove(powerup)  # Remove power-up after collision
 
+def toggle_pause():
+    global paused
+    paused = not paused  # Toggle the pause state
+
+def display_pause_menu():
+    """Display 'Paused' message on the screen."""
+    pause_text = custom_font.render("Game Paused", True, WHITE)
+    resume_text = small_font.render("Press 'P' to Resume", True, WHITE)
+
+    # Clear the screen
+    draw_gradient_background(background_color, BLACK)
+
+    # Display the pause messages
+    screen.blit(pause_text, (WIDTH // 2 - pause_text.get_width() // 2, HEIGHT // 3))
+    screen.blit(resume_text, (WIDTH // 2 - resume_text.get_width() // 2, HEIGHT // 2))
+
+    pygame.display.flip()  # Update the display
+
 # Leaderboard functions
 def get_leaderboard():
     """Read leaderboard from file and return as a sorted list of scores."""
@@ -400,6 +430,7 @@ def display_instructions():
         "Press Any Key to Launch the Ball",
         "Press 'M' to Toggle Background Music",
         "Press 'S' to Toggle Sound Effects",
+        "Press P to pause/resume the game"
         "Avoid Missing the Ball!",
         "Press Any Key to Start..."
     ]
@@ -468,6 +499,29 @@ clock = pygame.time.Clock()
 if not display_start_menu():
     sys.exit()
 display_instructions()
+# Pause state flag
+paused = False
+
+def toggle_pause():
+    """Toggle the paused state."""
+    global paused
+    paused = not paused
+
+def display_pause_menu():
+    """Display 'Game Paused' message on the screen."""
+    pause_text = custom_font.render("Game Paused", True, WHITE)
+    resume_text = small_font.render("Press 'P' to Resume", True, WHITE)
+
+    # Clear the screen
+    draw_gradient_background(background_color, BLACK)
+
+    # Display the pause messages
+    screen.blit(pause_text, (WIDTH // 2 - pause_text.get_width() // 2, HEIGHT // 3))
+    screen.blit(resume_text, (WIDTH // 2 - resume_text.get_width() // 2, HEIGHT // 2))
+
+    pygame.display.flip()  # Update the display
+
+# Main game loop
 while True:
     # Handle events, such as quitting the game or pressing keys
     for event in pygame.event.get():
@@ -475,7 +529,9 @@ while True:
             pygame.quit()  # Close the game window
             sys.exit()     # Exit the program
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_m:  # Toggle music
+            if event.key == pygame.K_p:  # Pause/Resume game
+                toggle_pause()
+            elif event.key == pygame.K_m:  # Toggle music
                 music_enabled = not music_enabled
                 if music_enabled:
                     pygame.mixer.music.unpause()  # Resume music
@@ -488,6 +544,7 @@ while True:
                 x, y = paddle_x + PADDLE_WIDTH // 2, paddle_y - RADIUS
                 dx = random.choice([-BALL_SPEED, BALL_SPEED])
                 dy = -BALL_SPEED
+                lives = 3  # Reset lives
                 score = 0
                 ball_launched = False
                 game_over = False
@@ -501,6 +558,11 @@ while True:
                 dx = random.choice([-BALL_SPEED, BALL_SPEED])
                 dy = -BALL_SPEED  # Adjust speed dynamically
                 ball_launched = True  # Launch the ball
+
+    # Pause logic: If the game is paused, display the pause menu and skip updates
+    if paused:
+        display_pause_menu()
+        continue  # Skip the rest of the loop while paused
 
     # Paddle movement controls
     keys = pygame.key.get_pressed()  # Check pressed keys
@@ -553,17 +615,21 @@ while True:
 
         paddle_rect = pygame.Rect(paddle_x, paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT)
 
-
-
-
-        # Game over if ball falls below the paddle
+        # Game over if the ball falls below the paddle
         if y + RADIUS >= HEIGHT:
-            game_over = True  # Set game state to over
-            dy = 0  # Stop ball movement
-            if sound_enabled:
-                game_over_sound.play()  # Play game over sound
-            pygame.mixer.music.stop()  # Stop background music immediately
-            update_leaderboard(score)
+            lives -= 1  # Decrease lives
+            if lives <= 0:
+                game_over = True  # Set game state to over
+                dy = 0  # Stop ball movement
+                if sound_enabled:
+                    game_over_sound.play()  # Play game over sound
+                pygame.mixer.music.stop()  # Stop background music immediately
+                update_leaderboard(score)
+            else:
+                # Reset the ball position for the next life
+                ball_launched = False
+                x, y = paddle_x + PADDLE_WIDTH // 2, paddle_y - RADIUS
+                dx, dy = 0, 0  # Reset ball velocity
 
     # Update gradient background color
     background_color = smooth_color_transition(background_color, target_color, speed=2)
@@ -589,6 +655,9 @@ while True:
         score_text = custom_font.render(f"Score: {score}", True, WHITE)
         screen.blit(score_text, (80, 10))  # Score position
         screen.blit(trophy_image, (10, 10))  # Trophy position
+
+        # Display lives
+        display_lives()
     else:
         option = display_game_over_menu()
         if option == 0:  # Restart
@@ -597,6 +666,7 @@ while True:
             dx = random.choice([-BALL_SPEED, BALL_SPEED])
             dy = -BALL_SPEED
             score = 0
+            lives = 3  # Reset lives here as well
             ball_launched = False
             game_over = False
             background_color = random.choices(range(256), k=3)
@@ -613,11 +683,12 @@ while True:
             dx = random.choice([-BALL_SPEED, BALL_SPEED])
             dy = -BALL_SPEED
             score = 0
+            lives = 3  # Reset lives here
             ball_launched = False
             game_over = False
             background_color = random.choices(range(256), k=3)
             target_color = random.choices(range(256), k=3)
-            PADDLE_WIDTH = skill_levels[current_skill_level]["paddle_width"]  # Reset paddle size
+            PADDLE_WIDTH = skill_levels[current_skill_level]["paddle_width"]
             RADIUS = 20  # Reset ball size
 
     # Refresh the display
