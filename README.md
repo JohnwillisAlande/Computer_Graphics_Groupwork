@@ -97,10 +97,10 @@ Choose from three skill levels:
 
 ## Media Assets
 
-- **Music & Sounds**:  
+ **Music & Sounds**:  
 - Background music: `assets/music/background_music.mp3`  
 - Sound effects: Collision, power-ups, and game over.
-- **Graphics**:  
+ **Graphics**:  
 - Trophy and medals for the leaderboard.  
 - Gradient background for an enhanced visual experience.
 
