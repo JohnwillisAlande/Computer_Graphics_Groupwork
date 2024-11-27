@@ -207,13 +207,13 @@ def display_skill_level():
         draw_gradient_background(background_color, BLACK)
 
         # Display title
-        title_text = text_font.render('Select Skill Level', True, WHITE)
+        title_text = custom_font.render('Select Skill Level', True, WHITE)
         screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 50))
 
         # Display skill levels
         for i, skill in enumerate(skill_names):
             color = MENU_HIGHLIGHT if i == selected_skill else MENU_GRAY
-            skill_text = text_font.render(skill, True, color)
+            skill_text = custom_font.render(skill, True, color)
             screen.blit(skill_text, (WIDTH // 2 - skill_text.get_width() // 2, 150 + i * 60))
 
         # Update display
@@ -383,7 +383,7 @@ def toggle_pause():
 def display_pause_menu():
     """Display 'Paused' message on the screen."""
     pause_text = custom_font.render("Game Paused", True, WHITE)
-    resume_text = small_font.render("Press 'P' to Resume", True, WHITE)
+    resume_text = custom_font.render("Press 'P' to Resume", True, WHITE)
 
     # Clear the screen
     draw_gradient_background(background_color, BLACK)
@@ -430,7 +430,7 @@ def display_instructions():
         "Press Any Key to Launch the Ball",
         "Press 'M' to Toggle Background Music",
         "Press 'S' to Toggle Sound Effects",
-        "Press P to pause/resume the game"
+        "Press P to pause/resume the game",
         "Avoid Missing the Ball!",
         "Press Any Key to Start..."
     ]
