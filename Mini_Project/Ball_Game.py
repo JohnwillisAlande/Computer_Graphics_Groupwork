@@ -9,6 +9,7 @@ pygame.mixer.init()  # Initialize Pygame mixer for music and sounds
 
 # Constants for game window dimensions and colors
 WIDTH, HEIGHT = 700, 600          # Screen width and height
+
 RADIUS = 20                        # Ball radius
 PADDLE_WIDTH, PADDLE_HEIGHT = 100, 10  # Paddle dimensions
 WHITE = (255, 255, 255)            # RGB color for white
@@ -50,6 +51,7 @@ if not os.path.exists(LEADERBOARD_FILE):
         pass  # Create an empty file
 
 # Music and sound effects
+
 background_music = "assets/music/background_music.mp3"  # Replace with your background music file
 collision_sound = pygame.mixer.Sound("assets/music/collision.wav")  # Replace with collision sound file
 power_up_sound = pygame.mixer.Sound("assets/music/power_up.mp3")  # Replace with power-up sound file
@@ -68,6 +70,7 @@ pygame.mixer.music.play(-1)  # Loop indefinitely
 # Music and sound toggle
 music_enabled = True
 sound_enabled = True
+
 
 # Power-Up Properties
 POWERUP_RADIUS = 10  # Size of the power-up circles
@@ -105,10 +108,12 @@ menu_options = ['New Game', 'High Scores', 'Skill Mode', 'Exit']
 skill_levels = {
     'Beginner': {'paddle_width': 120, 'ball_speed': 4},
     'Intermediate': {'paddle_width': 100, 'ball_speed': 6},
+
     'Expert': {'paddle_width': 80, 'ball_speed': 9},
 }
 
 lives = 3  # Player starts with 3 lives
+
 # Default skill level
 current_skill = 'Beginner'
 
@@ -118,6 +123,7 @@ MENU_GRAY = (200, 200, 200)
 current_skill_level = "Beginner"
 PADDLE_WIDTH = skill_levels[current_skill_level]["paddle_width"]
 BALL_SPEED = skill_levels[current_skill_level]["ball_speed"]
+
 
 paused = False
 
@@ -132,12 +138,14 @@ def display_start_menu():
         # Clear the screen for the current frame
         draw_gradient_background(background_color, BLACK)
 
+
         # Display the title
         title_text = custom_font.render("Welcome to the Bouncing Ball Game!", True, (255, 255, 255))
         screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 50))
 
         # Display menu options
         for i, option in enumerate(menu_options):
+
             color = MENU_HIGHLIGHT if i == selected_option else MENU_GRAY
             option_text = custom_font.render(option, True, color)
             screen.blit(option_text, (WIDTH // 2 - option_text.get_width() // 2, 150 + i * 60))
@@ -204,6 +212,7 @@ def display_skill_level():
 
     while in_skill_selection:
         # Clear the screen
+
         draw_gradient_background(background_color, BLACK)
 
         # Display title
@@ -213,6 +222,7 @@ def display_skill_level():
         # Display skill levels
         for i, skill in enumerate(skill_names):
             color = MENU_HIGHLIGHT if i == selected_skill else MENU_GRAY
+
             skill_text = custom_font.render(skill, True, color)
             screen.blit(skill_text, (WIDTH // 2 - skill_text.get_width() // 2, 150 + i * 60))
 
@@ -239,6 +249,7 @@ def display_skill_level():
 
 def display_leaderboard_screen():
     in_leaderboard = True
+
 
     # Resize medals to a smaller size
     scaled_medals = [
@@ -295,6 +306,7 @@ def display_leaderboard_screen():
 def smooth_color_transition(current, target, speed=1):
     return tuple(min(255, max(0, current[i] + (speed if current[i] < target[i] else -speed))) for i in range(3))
 
+
 # Add this function to display lives as text or icons
 def display_lives():
     lives_text = custom_font.render(f"Lives: {lives}", True, WHITE)
@@ -345,6 +357,7 @@ def draw_shaded_ball(ball_x, ball_y, ball_radius, ball_color):
         )
         pygame.draw.circle(surface, gradient_color, (ball_radius, ball_radius), i)
     screen.blit(surface, (ball_x - ball_radius, ball_y - ball_radius))
+
 
 def spawn_powerup():
     """Spawns a random power-up at a random location."""
@@ -402,7 +415,6 @@ def get_leaderboard():
     return sorted(scores, reverse=True)[:5]  # Top 5 scores
 
 
-
 def update_leaderboard(new_score):
     """Update leaderboard with a new score."""
     scores = get_leaderboard()
@@ -435,7 +447,7 @@ def display_instructions():
         "Press Any Key to Start..."
     ]
     screen.blit(title, (WIDTH // 2 - title.get_width() // 2, HEIGHT // 4))
-    for i, text in enumerate(instructions):
+    for i, text in enumerate(instructions)
         line = small_font.render(text, True, WHITE)
         screen.blit(line, (WIDTH // 2 - line.get_width() // 2, HEIGHT // 2 + i * 30))
     pygame.display.flip()
@@ -445,6 +457,7 @@ def display_instructions():
 def display_game_over_menu():
     selected_option = 0  # 0 for Restart, 1 for Main Menu
     options = ["Restart", "Main Menu"]
+
 
     game_over_font = pygame.font.Font("assets/fonts/poppins.ttf", 36)  # Adjust font size as needed
     menu_font = pygame.font.Font("assets/fonts/poppins.ttf", 28)
@@ -499,6 +512,7 @@ clock = pygame.time.Clock()
 if not display_start_menu():
     sys.exit()
 display_instructions()
+
 # Pause state flag
 paused = False
 
@@ -559,6 +573,7 @@ while True:
                 dy = -BALL_SPEED  # Adjust speed dynamically
                 ball_launched = True  # Launch the ball
 
+
     # Pause logic: If the game is paused, display the pause menu and skip updates
     if paused:
         display_pause_menu()
@@ -576,6 +591,7 @@ while True:
         if ball_launched:
             x += dx  # Update ball's x-coordinate
             y += dy  # Update ball's y-coordinate
+
 
             # Restrict ball from moving into the score area
             if y - RADIUS < 80:  #  height threshold for the score display
@@ -603,6 +619,7 @@ while True:
             if sound_enabled:
                 power_up_sound.play()  # Play power-up sound
             target_color = random.choices(range(256), k=3)  # Change background target color
+
 
         # Spawn power-ups
         current_time = pygame.time.get_ticks()
@@ -636,6 +653,7 @@ while True:
     if background_color == target_color:
         target_color = random.choices(range(256), k=3)  # Update target color if transition complete
     draw_gradient_background(background_color, BLACK)
+
 
     # Draw paddle and ball
     pygame.draw.rect(screen, WHITE, (paddle_x, paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT))  # Paddle

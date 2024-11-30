@@ -115,10 +115,3 @@ Choose from three skill levels:
 ---
 
 Enjoy the **Bouncing Ball Game** and aim for the leaderboard! 🎮
-
-
-
-
-
-
-
