@@ -1,41 +1,124 @@
-# Computer_Graphics_Groupwork
-This repository contains group work done for group 8 in Computer Science class ICS 3C in Strathmore University.
-
-# 2D_House.py and House.png
-These python and image files contain group work done during Lab 1 designing a 2D House using pycharm.
-
-# Mini_Project
 # Bouncing Ball Game
 
-A simple yet fun bouncing ball game built with Python and Pygame. Control a paddle to keep the ball in play, score points, and watch as the background color dynamically changes with every successful bounce!
+A feature-packed bouncing ball game built with Python and Pygame. Test your reflexes and skill as you control a paddle to keep the ball in play, unlock power-ups, and enjoy dynamic gameplay with gradient-changing backgrounds and engaging sound effects.
 
-# Features
-- Dynamic Gradient Background: The background color smoothly changes every time the ball bounces off the paddle or walls.
-- Paddle Control: Use the arrow keys to move the paddle left and right.
-- Randomized Ball Direction: The ball launches in a random direction after the initial key press.
-- Score Counter: Score increases with every successful bounce off the paddle.
+---
 
-# Gameplay
-1. Run the game, and a ball will rest on the paddle.
-2. Press any key to launch the ball in a random direction.
-3. Use the **left** and **right arrow keys** to control the paddle and keep the ball from falling.
-4. Every time the ball hits the paddle or the screen boundaries, the background changes color.
-5. The game ends if the ball falls below the screen. Your score is then displayed in the console.
-## Installation and Setup
-1. Ensure you have Python and Pygame installed.
-   ```bash
-   pip install pygame
-   ```
-2. Download or clone the repository:
-   ```bash
-   git clone https://github.com/JohnwillisAlande/Computer_Graphics_Groupwork.git
-   ```
-3. Navigate to the project directory and run the game:
-   ```bash
-   cd Mini_Project
-   python Ball_Game.py
-   ```
+## Features
+
+- 🎨 **Dynamic Gradient Background**: Background colors smoothly transition with every paddle or wall bounce.
+- 🕹️ **Paddle Control**: Move the paddle using arrow keys to prevent the ball from falling.
+- 🎲 **Random Ball Launch**: The ball launches in a random direction after the initial key press.
+- 🏆 **Score and Leaderboard**: Track your score during gameplay and view top scores in the leaderboard.
+- 🔊 **Music & Sound Effects**: Includes toggleable background music and sound effects for immersive gameplay.
+- 💡 **Skill Levels**: Choose your difficulty level—Beginner, Intermediate, or Expert.
+- ⚡ **Power-Ups**: Collect green power-ups to boost paddle size and ball radius; avoid red ones that shrink them.
+- ⏸️ **Pause Feature**: Pause and resume the game at any time.
+- 🎮 **Game Modes**:
+  - **New Game**: Start a new challenge.
+  - **High Scores**: View top leaderboard scores.
+  - **Skill Mode**: Select your preferred difficulty level.
+
+---
+
+## Gameplay
+
+1. **Start the Game**:  
+   From the main menu, choose your game mode or skill level.
+2. **Launch the Ball**:  
+   Press any key to launch the ball in a random direction.
+3. **Control the Paddle**:  
+   Use the **Left** and **Right Arrow Keys** to move the paddle.
+4. **Score Points**:  
+   Every successful bounce off the paddle or walls adds to your score.
+5. **Power-Ups**:  
+   - **Green**: Increases paddle size and ball radius.  
+   - **Red**: Decreases paddle size and ball radius.
+6. **Avoid Losing Lives**:  
+   The game ends if you run out of lives (you start with three).
+
+---
+
+## Installation
+
+1. **Install Python and Pygame**  
+   Ensure Python 3.x is installed. Then, install Pygame using the following command:
+2. **Clone the Repository**  
+   Clone this project to your local machine:
+3. **Navigate to the Project Directory**
+4. **Run the Game**  
+   Execute the game script:
+---
 
 ## Requirements
-- Python 3.x
-- Pygame library
+
+- **Python 3.x**  
+- **Pygame Library**
+
+---
+
+## Controls
+
+| Action                  | Key(s)             |
+|-------------------------|--------------------|
+| Launch Ball             | **Any Key**       |
+| Move Paddle Left        | **Left Arrow**    |
+| Move Paddle Right       | **Right Arrow**   |
+| Pause/Resume            | **P**             |
+| Toggle Music            | **M**             |
+| Toggle Sound Effects    | **S**             |
+| Restart (Game Over)     | **R**             |
+
+---
+
+## Power-Ups
+
+- **Green Power-Up**:  
+- 🟢 Increases paddle size and ball radius.
+- **Red Power-Up**:  
+- 🔴 Decreases paddle size and ball radius.
+
+---
+
+## Leaderboard
+
+After each game, your score is recorded in the leaderboard. The top 5 scores are displayed in the **High Scores** menu.
+
+---
+
+## Skill Levels
+
+Choose from three skill levels:  
+- **Beginner**: Larger paddle, slower ball.  
+- **Intermediate**: Balanced gameplay.  
+- **Expert**: Smaller paddle, faster ball.
+
+---
+
+## Media Assets
+
+ **Music & Sounds**:  
+- Background music: `assets/music/background_music.mp3`  
+- Sound effects: Collision, power-ups, and game over.
+ **Graphics**:  
+- Trophy and medals for the leaderboard.  
+- Gradient background for an enhanced visual experience.
+
+---
+
+## Future Enhancements
+
+- Multiplayer mode.  
+- Additional power-ups with unique effects.  
+- Enhanced animations for collisions and game events.
+
+---
+
+Enjoy the **Bouncing Ball Game** and aim for the leaderboard! 🎮
+
+
+
+
+
+
+
